@@ -208,6 +208,11 @@ func (p *Processor) Process(ctx context.Context, updates chan *conns.Update, eve
 				EventData: []byte("/characters/" + charCard.ID.String() + "/image"),
 			})
 
+			defer eventWriter(&conns.DataEvent{
+				EventType: conns.EventTypeImage,
+				EventData: []byte(" "),
+			})
+
 			filteredRequest := p.FilterText(ctx, broadcaster.ID, msg.TwitchMessage.Message)
 
 			requestAudio, err := p.TTS(ctx, filteredRequest, charCard.Data.VoiceReference)
@@ -239,11 +244,6 @@ func (p *Processor) Process(ctx context.Context, updates chan *conns.Update, eve
 				return nil
 			}
 
-			eventWriter(&conns.DataEvent{
-				EventType: conns.EventTypeImage,
-				EventData: []byte(" "),
-			})
-
 			continue
 		}
 
@@ -273,6 +273,11 @@ func (p *Processor) Process(ctx context.Context, updates chan *conns.Update, eve
 		eventWriter(&conns.DataEvent{
 			EventType: conns.EventTypeImage,
 			EventData: []byte("/characters/" + charCard.ID.String() + "/image"),
+		})
+
+		defer eventWriter(&conns.DataEvent{
+			EventType: conns.EventTypeImage,
+			EventData: []byte(" "),
 		})
 
 		requestText := requester + " asked me: " + msg.TwitchMessage.Message
@@ -369,11 +374,6 @@ func (p *Processor) Process(ctx context.Context, updates chan *conns.Update, eve
 		case <-ctx.Done():
 			return nil
 		}
-
-		eventWriter(&conns.DataEvent{
-			EventType: conns.EventTypeImage,
-			EventData: []byte(" "),
-		})
 	}
 }
 
